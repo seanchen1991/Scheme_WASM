@@ -71,9 +71,9 @@ fn parse_whitespace<I>(iter: &mut Peekable<I>) -> bool
   if check_chr(iter, " ") || check_chr(iter, "\n") {
     iter.next();
     true
+  } else {
+    false
   }
-
-  false
 }
 
 fn parse_comment<I>(iter: &mut Peekable<I>) -> bool 
@@ -82,8 +82,24 @@ fn parse_comment<I>(iter: &mut Peekable<I>) -> bool
   if check_chr(iter, ";") {
     iter.take_until(|c| *c != "\n");
     true
+  } else {
+    false
   }
-
-  false
 }
 
+fn check<F, I>(iter: &mut Peekable<I>, f: F) -> bool 
+  where F: Fn(char) -> bool,
+        I: Iterator<Item=char>
+{
+  if let Some(&x) = iter.peek() {
+    f(x)
+  } else {
+    false
+  }
+}
+
+fn check_chr<I>(iter: &mut Peekable<I>, chr: char) -> bool 
+  where I: Iterator<Item=char>
+{
+  check(iter, |x| x == chr)
+}
